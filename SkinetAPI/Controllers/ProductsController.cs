@@ -11,23 +11,23 @@ namespace SkinetAPI.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository productRepository;
+        private readonly IGenericRepository<Product> repository;
 
-        public ProductsController(IProductRepository productRepository)
+        public ProductsController(IGenericRepository<Product> repository)
         {
-            this.productRepository = productRepository;
+            this.repository = repository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(string? brand, string? type, string? sort)
         {
-            return Ok(await productRepository.GetProductsAsync(brand, type, sort));
+            return Ok(await repository.GetAllAsync());
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await productRepository.GetProductByIdAsync(id);
+            var product = await repository.GetByIdAsync(id);
 
             if (product == null) return NotFound();
 
@@ -37,8 +37,8 @@ namespace SkinetAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
-            productRepository.CreateProduct(product);
-            if (await productRepository.SaveChangesAsync())
+            repository.Add(product);
+            if (await repository.SaveAllAsync())
             {
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);
             }
@@ -51,9 +51,9 @@ namespace SkinetAPI.Controllers
             if (product.Id != id || !ProductExist(id)) 
                 return BadRequest("Cannot update this product");
 
-            productRepository.UpdateProduct(product);
+            repository.Update(product);
 
-            if (await productRepository.SaveChangesAsync())
+            if (await repository.SaveAllAsync())
             {
                 return NoContent();
             }
@@ -63,12 +63,12 @@ namespace SkinetAPI.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = await productRepository.GetProductByIdAsync(id);
+            var product = await repository.GetByIdAsync(id);
 
             if (product == null) return NotFound();
 
-            productRepository.DeleteProduct(product);
-            if (await productRepository.SaveChangesAsync())
+            repository.Remove(product);
+            if (await repository.SaveAllAsync())
             {
                 return NoContent();
             }
@@ -78,18 +78,18 @@ namespace SkinetAPI.Controllers
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
         {
-            return Ok(await productRepository.GetBrandsAsync());
+            return Ok();
         }
 
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
-            return Ok(await productRepository.GetTypesAsync());
+            return Ok();
         }
 
         private bool ProductExist(int id)
         {
-            return productRepository.ProductExist(id);
+            return repository.Exists(id);
         }
     }
 }

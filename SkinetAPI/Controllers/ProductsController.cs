@@ -8,10 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using SkinetAPI.RequestHelpers;
 
 namespace SkinetAPI.Controllers
-{
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+{    
+    public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> repository;
 
@@ -24,12 +22,8 @@ namespace SkinetAPI.Controllers
         public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery]ProductSpecParams productParam)
         {
             var spec = new ProductSpecification(productParam);
-            var products = await repository.ListAsync(spec);
-            var productCount = await repository.CountAsync(spec);
-
-            var pagination = new Pagination<Product>(productParam.PageIndex, productParam.PageSize, productCount, products);
-
-            return Ok(pagination);
+            
+            return await CreatePagedResult<Product>(repository, spec, productParam.PageIndex, productParam.PageSize);
         }
 
         [HttpGet("{id:int}")]

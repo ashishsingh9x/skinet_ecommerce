@@ -25,6 +25,8 @@ namespace Core.Specification
 
         public Expression<Func<T, object>>? OrderByDescending { get; private set; }
 
+        public bool IsDistinct{ get; private set; }
+
         protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;

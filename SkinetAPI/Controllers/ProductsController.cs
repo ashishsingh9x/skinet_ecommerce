@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SkinetAPI.RequestHelpers;
 
 namespace SkinetAPI.Controllers
 {
@@ -20,11 +21,15 @@ namespace SkinetAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery]ProductSpecParams productSpec)
+        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery]ProductSpecParams productParam)
         {
-            var spec = new ProductSpecification(productSpec);
+            var spec = new ProductSpecification(productParam);
             var products = await repository.ListAsync(spec);
-            return Ok(products);
+            var productCount = await repository.CountAsync(spec);
+
+            var pagination = new Pagination<Product>(productParam.PageIndex, productParam.PageSize, productCount, products);
+
+            return Ok(pagination);
         }
 
         [HttpGet("{id:int}")]

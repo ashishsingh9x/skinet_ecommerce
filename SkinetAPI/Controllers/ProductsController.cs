@@ -81,13 +81,15 @@ namespace SkinetAPI.Controllers
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
         {
-            return Ok();
+            var spec = new BrandListSpecification();
+            return Ok(await repository.ListAsync(spec));
         }
 
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
-            return Ok();
+            var spec = new TypeListSpecification();
+            return Ok(await repository.ListAsync(spec));
         }
 
         private bool ProductExist(int id)

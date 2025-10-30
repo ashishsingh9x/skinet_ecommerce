@@ -9,11 +9,11 @@ namespace Core.Specification
 {
     public class ProductSpecification : BaseSpecification<Product>
     {
-        public ProductSpecification(string? brand, string? type, string? sort) : base(x =>
-            (string.IsNullOrWhiteSpace(brand) || x.Brand == brand) &&
-            (string.IsNullOrWhiteSpace(type) || x.Type == type))
+        public ProductSpecification(ProductSpecParams productSpec) : base(x =>
+            (productSpec.Brands.Count == 0 || productSpec.Brands.Contains(x.Brand) &&
+            (productSpec.Types.Count == 0 || productSpec.Types.Contains(x.Type))))
         {
-            switch (sort)
+            switch (productSpec.Sort)
             {
                 case "priceAsc":
                     AddOrderBy(x => x.Price);

@@ -10,6 +10,7 @@ namespace Core.Specification
     public class ProductSpecification : BaseSpecification<Product>
     {
         public ProductSpecification(ProductSpecParams productSpec) : base(x =>
+            (string.IsNullOrEmpty(productSpec.Search) || x.Name.ToLower().Contains(productSpec.Search)) &&
             (productSpec.Brands.Count == 0 || productSpec.Brands.Contains(x.Brand)) &&
             (productSpec.Types.Count == 0 || productSpec.Types.Contains(x.Type)))
         {

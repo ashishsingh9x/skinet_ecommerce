@@ -12,12 +12,13 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements OnInit {
   title = 'Skinet';
   baseUrl: string = "https://localhost:7006/api/";
+  products: any[] = [];
   constructor(private http: HttpClient) {
   }
 
   ngOnInit(): void { 
-    this.http.get(this.baseUrl + 'products').subscribe({
-      next: data => console.log(data),
+    this.http.get<any>(this.baseUrl + 'products').subscribe({
+      next: response => this.products = response.data,
       error: error => console.log(error),
       complete: () => console.log('complete')
     });

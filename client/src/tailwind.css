@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* tailwind 4 does not support .SCSS so we need to write in .css */
+
+.container {
+    @apply mx-auto max-w-screen-2xl
+}

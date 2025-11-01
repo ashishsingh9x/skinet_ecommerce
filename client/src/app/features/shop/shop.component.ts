@@ -19,6 +19,12 @@ export class ShopComponent implements OnInit {
   }
 
   ngOnInit(): void { 
+    this.InitializeShop();
+  }
+
+  InitializeShop() {
+    this.shopService.getBrands();
+    this.shopService.getTypes();
     this.shopService.getProducts().subscribe({
       next: response => this.products = response.data,
       error: error => console.log(error),

@@ -17,8 +17,12 @@ import { MatIcon } from "@angular/material/icon";
   styleUrl: './shop.component.scss',
 })
 export class ShopComponent implements OnInit {
+  //inject dialogService so we can open up modal
   private dialogService = inject(MatDialog);
+
   products: Product[] = [];
+  selectedBrands: string[] = [];
+  selectedTypes: string[] = [];
   constructor(private shopService: ShopService) {
   }
 
@@ -40,7 +44,20 @@ export class ShopComponent implements OnInit {
     // dialog service is service from angular material, some component in angular material 
     // comes with service like the below one.
     const dialogRef = this.dialogService.open(FilterDialogComponent, {
-      minWidth: '500px'
+      minWidth: '500px',
+      data: { //pass these 2 to our filter dialog component
+        selectedBrand: this.selectedBrands,
+        selectedType: this.selectedTypes
+      }
+    });
+    dialogRef.afterClosed().subscribe({
+      next: result => {
+        if (result) {
+          console.log(result);
+          this.selectedBrands = result.selectedBrands;
+          this.selectedTypes = result.selectedTypes
+        }
+      }
     })
   }
 }

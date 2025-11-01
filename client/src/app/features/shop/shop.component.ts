@@ -46,8 +46,8 @@ export class ShopComponent implements OnInit {
     const dialogRef = this.dialogService.open(FilterDialogComponent, {
       minWidth: '500px',
       data: { //pass these 2 to our filter dialog component
-        selectedBrand: this.selectedBrands,
-        selectedType: this.selectedTypes
+        selectedBrands: this.selectedBrands,
+        selectedTypes: this.selectedTypes
       }
     });
     dialogRef.afterClosed().subscribe({

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" important;
 
 /* tailwind 4 does not support .SCSS so we need to write in .css */
 

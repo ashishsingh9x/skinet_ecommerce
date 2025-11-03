@@ -9,13 +9,15 @@ import { MatIcon } from "@angular/material/icon";
 import { MatMenu, MatMenuTrigger } from "@angular/material/menu";
 import { MatListOption, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { ShopParams } from '../../shared/models/shopParams';
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { Pagination } from '../../shared/models/pagination';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
   imports: [
     ProductItemComponent, MatButton, MatIcon, MatMenu, MatSelectionList, MatListOption,
-    MatMenuTrigger
+    MatMenuTrigger, MatPaginator
 ],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss',
@@ -24,8 +26,9 @@ export class ShopComponent implements OnInit {
   //inject dialogService so we can open up modal
   private dialogService = inject(MatDialog);
 
-  products: Product[] = [];
-  shopParams = new ShopParams;
+  products?: Pagination<Product>;
+  shopParams = new ShopParams();
+  pageSizeOptions = [5, 10, 15, 20];
   sortOptions = [
     { name: 'Alphabetical', value: 'name' },
     { name: 'Price: Low-High', value: 'priceAsc' },
@@ -49,14 +52,21 @@ export class ShopComponent implements OnInit {
     const selectedOptions = event.options[0];
     if (selectedOptions) {
       this.shopParams.sort = selectedOptions.value;
+      this.shopParams.pageIndex = 1;
       this.getProduct();
     }
+  }
+
+  handlePageEvent(event: PageEvent) {
+    this.shopParams.pageIndex = event.pageIndex + 1;
+    this.shopParams.pageSize = event.pageSize;
+    this.getProduct();
   }
 
   getProduct() {
     this.shopService.getProducts(this.shopParams).subscribe({
       next: response => {
-        this.products = response.data;
+        this.products = response;
       },
       error: error => console.log(error)
     });
@@ -78,6 +88,7 @@ export class ShopComponent implements OnInit {
           console.log(result);
           this.shopParams.brands = result.selectedBrands;
           this.shopParams.types = result.selectedTypes;
+          this.shopParams.pageIndex = 1;
           this.getProduct();
         }
       }

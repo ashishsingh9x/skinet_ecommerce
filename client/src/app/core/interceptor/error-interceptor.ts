@@ -3,10 +3,12 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { SnackbarService } from '../services/snackbar.service';
+import { ErrorService } from '../services/error.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const snackbarService = inject(SnackbarService);
+  const errorService = inject(ErrorService); 
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
@@ -30,8 +32,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigateByUrl('/not-found');
       }
       if (err.status === 500) {
+        errorService.setError(err.error); // store error globally
         router.navigateByUrl('/server-error');
-      }      
+      }    
       return throwError(() => err);
     })
   )

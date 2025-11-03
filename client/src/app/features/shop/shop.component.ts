@@ -4,20 +4,22 @@ import { ShopService } from '../../core/services/shop.service';
 import { ProductItemComponent } from './product-item/product-item.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterDialogComponent } from './filter-dialog/filter-dialog.component';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from "@angular/material/icon";
 import { MatMenu, MatMenuTrigger } from "@angular/material/menu";
 import { MatListOption, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { ShopParams } from '../../shared/models/shopParams';
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { Pagination } from '../../shared/models/pagination';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
   imports: [
     ProductItemComponent, MatButton, MatIcon, MatMenu, MatSelectionList, MatListOption,
-    MatMenuTrigger, MatPaginator
+    MatMenuTrigger, MatPaginator, FormsModule,
+    MatIconButton
 ],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss',
@@ -55,6 +57,11 @@ export class ShopComponent implements OnInit {
       this.shopParams.pageIndex = 1;
       this.getProduct();
     }
+  }
+
+  onSearchChange() {
+    this.shopParams.pageIndex = 1;
+    this.getProduct();
   }
 
   handlePageEvent(event: PageEvent) {

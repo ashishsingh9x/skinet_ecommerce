@@ -1,0 +1,39 @@
+﻿using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+
+namespace SkinetAPI.Controllers
+{
+    public class CartController : BaseApiController
+    {
+        private readonly ICartService cartService;
+        public CartController(ICartService cartService)
+        {
+            this.cartService = cartService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ShoppingCart>> GetCartById(string id)
+        {
+            var cart = await cartService.GetCartAsync(id);
+            return Ok(cart ?? new ShoppingCart { Id = id });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateCart(ShoppingCart cart)
+        {
+            var updatedCart = await cartService.SetCartAsync(cart);
+            if (updatedCart == null) return BadRequest("Problem with cart");
+            return Created();
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteCart(string id)
+        {
+            var result = await cartService.DeleteCart(id);
+            if (!result) return BadRequest("Problem deleting cart");
+            return Ok();
+        }
+    }
+}

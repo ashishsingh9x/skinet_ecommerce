@@ -48,7 +48,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+                .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>(); // mapgroup will have api/login or api/register, default register don't have api/**

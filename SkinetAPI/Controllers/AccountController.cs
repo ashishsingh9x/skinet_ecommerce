@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkinetAPI.DTOs;
+using SkinetAPI.Extensions;
 using System.Security.Claims;
 
 namespace SkinetAPI.Controllers
@@ -48,11 +49,8 @@ namespace SkinetAPI.Controllers
         {
             if (User.Identity?.IsAuthenticated == false) return NoContent();
 
-            var user = await signInManager.UserManager.Users
-                                .FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
-
-            if (user == null) return Unauthorized();
-
+            var user = await signInManager.UserManager.GetUserByEmail(User);
+                                ;
             return Ok(new
             {
                 user.FirstName,

@@ -1,7 +1,10 @@
 ﻿using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SkinetAPI.DTOs;
+using System.Security.Claims;
 
 namespace SkinetAPI.Controllers
 {
@@ -30,6 +33,32 @@ namespace SkinetAPI.Controllers
             if (!result.Succeeded) return BadRequest();
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return NoContent();
+        }
+
+        [HttpGet("user-info")]
+        public async Task<ActionResult> GetUserInfo()
+        {
+            if (User.Identity?.IsAuthenticated == false) return NoContent();
+
+            var user = await signInManager.UserManager.Users
+                                .FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
+
+            if (user == null) return Unauthorized();
+
+            return Ok(new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+            });
         }
     }
 }

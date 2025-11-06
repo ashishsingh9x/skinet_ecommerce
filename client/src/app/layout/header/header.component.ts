@@ -2,9 +2,10 @@ import { Component, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { MatBadge } from '@angular/material/badge';
-import { RouterLink, RouterLinkActive } from "@angular/router";
+import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { BusyService } from '../../core/services/busy.service';
+import { AccountService } from '../../core/services/account.service';
 
 @Component({
   selector: 'app-header',
@@ -14,4 +15,15 @@ import { BusyService } from '../../core/services/busy.service';
 })
 export class HeaderComponent {
   busyService = inject(BusyService);
+  accountService = inject(AccountService);
+  private router = inject(Router);
+
+  logout() {
+    this.accountService.logout().subscribe({
+      next: () => {
+        this.accountService.currentUser.set(null);
+        this.router.navigateByUrl('/account/login');
+      }
+    });
+  }
 }

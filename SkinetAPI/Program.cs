@@ -43,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//enable HTTPS in a .NET Core application
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
